@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoUva Snacks | Dashboard de Gestión</title>
+    <meta name="description" content="Sistema de gestión de ventas y gastos para RoUva Snacks. Control de inventario y finanzas personalizadas.">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Login Overlay -->
+    <div id="login-overlay" class="modal-overlay">
+        <div class="modal" style="max-width: 350px; text-align: center;">
+            <div class="logo-container" style="justify-content: center; margin-bottom: 2rem;">
+                <img src="logo.png" alt="RoUva Logo" style="width: 80px; height: auto;">
+            </div>
+            <h2 style="margin-bottom: 1.5rem;">Bienvenido a RoUva</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Usuario</label>
+                    <input type="text" id="login-username" placeholder="Ingresa tu nombre" required style="text-align: center;">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="login-password" placeholder="••••" required style="text-align: center;">
+                </div>
+                <button type="submit" class="btn-submit">Iniciar Sesión</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="app-container" id="main-app">
+        <!-- Sidebar / Navigation -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <img src="logo.png" alt="RoUva Snacks Logo" class="logo-img-full">
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" id="nav-dashboard">
+                    <span class="icon">📊</span> Panel Principal
+                </a>
+                <a href="#" class="nav-item" id="nav-pos">
+                    <span class="icon">🛒</span> Punto de Venta
+                </a>
+                <a href="#" class="nav-item" id="nav-users">
+                    <span class="icon">👥</span> Usuarios
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <p>© 2024 RoUva Snacks</p>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="welcome-text">
+                    <h2>¡Hola, Angel! 👋</h2>
+                    <p>Aquí tienes el resumen de hoy para RoUva Snacks.</p>
+                </div>
+                <div class="user-profile">
+                    <div class="notifications">🔔</div>
+                    <button id="btn-logout" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:1.2rem;" title="Cerrar Sesión">Logout 🚪</button>
+                    <div class="avatar" id="user-avatar">A</div>
+                </div>
+            </header>
+
+            <div id="view-dashboard">
+                <section class="dashboard-stats">
+                <div class="stat-card revenue">
+                    <div class="stat-info">
+                        <h3>Ventas Totales</h3>
+                        <p class="stat-value" id="total-revenue">$0.00</p>
+                        <span class="stat-trend up">↑ 12% vs ayer</span>
+                    </div>
+                    <div class="stat-icon-bg">💵</div>
+                </div>
+                <div class="stat-card expenses">
+                    <div class="stat-info">
+                        <h3>Gastos Totales</h3>
+                        <p class="stat-value" id="total-expenses">$0.00</p>
+                        <span class="stat-trend down">↓ 5% vs ayer</span>
+                    </div>
+                    <div class="stat-icon-bg">📉</div>
+                </div>
+                <div class="stat-card profit">
+                    <div class="stat-info">
+                        <h3>Ganancia Neta</h3>
+                        <p class="stat-value" id="net-profit">$0.00</p>
+                        <span class="stat-trend up">↑ 8% este mes</span>
+                    </div>
+                    <div class="stat-icon-bg">✨</div>
+                </div>
+                <div class="stat-card roi">
+                    <div class="stat-info">
+                        <h3>Inversión Recuperada</h3>
+                        <p class="stat-value" id="roi-progress">0%</p>
+                        <span class="stat-trend" id="roi-status">Pendiente: $0</span>
+                    </div>
+                    <div class="stat-icon-bg">🎯</div>
+                </div>
+            </section>
+
+            <div class="dashboard-grid">
+                <!-- Recent Activity -->
+                <div class="grid-card activity-card">
+                    <div class="card-header">
+                        <h3>Actividad Reciente</h3>
+                        <button class="btn-small" id="btn-view-all">Ver todo</button>
+                    </div>
+                    <div class="activity-list" id="recent-activity">
+                        <!-- Items will be injected by JS -->
+                        <div class="empty-state">
+                            <p>No hay movimientos registrados hoy.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="grid-card actions-card">
+                    <div class="card-header">
+                        <h3>Acciones Rápidas</h3>
+                    </div>
+                    <div class="actions-grid">
+                        <button class="action-btn sale" id="open-pos-modal" style="background: linear-gradient(135deg, #8e44ad, #9b59b6); box-shadow: 0 10px 20px rgba(142, 173, 142, 0.3);">
+                            <span class="icon">🛒</span> Punto de Venta
+                        </button>
+                        <button class="action-btn" id="open-corte-modal" style="background: linear-gradient(135deg, #3498db, #2980b9); box-shadow: 0 10px 20px rgba(52, 152, 219, 0.2);">
+                            <span class="icon">📊</span> Corte de Caja
+                        </button>
+                        <button class="action-btn expense" id="open-expense-modal">
+                            <span class="icon">➖</span> Nuevo Gasto
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Daily Summary -->
+                <div class="grid-card daily-summary-card" style="grid-column: 1 / -1;">
+                    <div class="card-header">
+                        <h3>Resumen Histórico por Día</h3>
+                    </div>
+                    <div class="table-container" style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid var(--glass-border); color: var(--text-muted);">
+                                    <th style="padding: 1rem;">Fecha</th>
+                                    <th style="padding: 1rem;">Productos</th>
+                                    <th style="padding: 1rem;">Total Ventas</th>
+                                    <th style="padding: 1rem;">Gastos</th>
+                                    <th style="padding: 1rem;">Ganancia Neta</th>
+                                </tr>
+                            </thead>
+                            <tbody id="daily-summary-body">
+                                <!-- Se llenará dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- View Users -->
+            <div id="view-users" class="hidden">
+                <div class="grid-card">
+                    <div class="card-header">
+                        <h3>Gestión de Usuarios</h3>
+                        <button class="btn-submit" id="open-user-modal" style="width: auto; padding: 0.5rem 1.5rem;">+ Nuevo Usuario</button>
+                    </div>
+                    <div class="table-container">
+                        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid var(--glass-border); color: var(--text-muted);">
+                                    <th style="padding: 1rem;">Usuario</th>
+                                    <th style="padding: 1rem;">Rol</th>
+                                    <th style="padding: 1rem;">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-list-body">
+                                <!-- Dinámico -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="user-modal-container" class="modal-overlay hidden">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3>Crear Nuevo Usuario</h3>
+                <button class="close-user-modal" style="background:none; border:none; color:var(--text-muted); font-size:2rem; cursor:pointer;">&times;</button>
+            </div>
+            <form id="user-form">
+                <div class="form-group">
+                    <label>Nombre de Usuario</label>
+                    <input type="text" id="new-user-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="new-user-pass" required>
+                </div>
+                <div class="form-group">
+                    <label>Rol</label>
+                    <select id="new-user-role">
+                        <option value="admin">Administrador (Todo)</option>
+                        <option value="cajero">Cajero (Solo POS)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-submit">Guardar Usuario</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-container" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-title">Nueva Entrada</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="entry-form">
+                <div class="form-group">
+                    <label for="entry-type">Tipo</label>
+                    <select id="entry-type" required>
+                        <option value="sale">Venta</option>
+                        <option value="expense">Gasto</option>
+                    </select>
+                </div>
+                <div class="form-group" id="product-group">
+                    <label for="entry-product">Producto / Categoría</label>
+                    <select id="entry-product">
+                        <option value="Snack Salado">Snack Salado</option>
+                        <option value="Snack Dulce">Snack Dulce</option>
+                        <option value="Bebida">Bebida</option>
+                        <option value="Combo">Combo</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="entry-desc">Descripción / Nota</label>
+                    <input type="text" id="entry-desc" placeholder="Ej. Papas con chile" required>
+                </div>
+                <div class="form-group">
+                    <label for="entry-amount">Monto ($)</label>
+                    <input type="number" id="entry-amount" step="0.01" placeholder="0.00" required>
+                </div>
+                <button type="submit" class="btn-submit">Guardar Registro</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Modal Corte de Caja -->
+    <div id="corte-modal-container" class="modal-overlay hidden">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Registrar Corte del Día</h3>
+                <button class="close-corte-modal" style="background:none; border:none; color:var(--text-muted); font-size:2rem; cursor:pointer;">&times;</button>
+            </div>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Ingresa las cantidades vendidas hoy de cada producto.</p>
+            <form id="corte-form">
+                <div class="form-group">
+                    <label>Fecha del Corte</label>
+                    <input type="date" id="corte-date" required>
+                </div>
+                <div id="corte-products-list" style="max-height: 300px; overflow-y: auto; padding-right: 10px; margin-bottom: 1.5rem;">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+                <div id="corte-total-preview" style="text-align: right; margin-bottom: 1rem; font-weight: 600; color: var(--success); font-size: 1.2rem;">
+                    Total estimado: $0.00
+                </div>
+                <button type="submit" class="btn-submit">Finalizar Corte del Día</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Full Screen POS View -->
+    <div id="view-pos" class="hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--bg-dark); z-index: 5000; padding: 2rem;">
+        <div style="display: grid; grid-template-columns: 1fr 350px; gap: 2rem; height: 100%;">
+            <div class="pos-left" style="display: flex; flex-direction: column;">
+                <div class="card-header" style="margin-bottom: 2rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <img src="logo.png" style="width: 50px;">
+                        <h2 style="font-size: 2rem;">Terminal de Ventas <span style="color: var(--primary-light); font-size: 1rem; margin-left: 10px;">RoUva Snacks</span></h2>
+                    </div>
+                    <button id="btn-back-to-dashboard" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; padding: 0.5rem 1rem; border-radius: 10px; cursor: pointer;">← Volver al Panel</button>
+                </div>
+                <div id="pos-products-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1.5rem; overflow-y: auto; padding-bottom: 2rem;">
+                    <!-- Botones grandes de productos -->
+                </div>
+            </div>
+            <div class="pos-right" style="background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 30px; padding: 2rem; display: flex; flex-direction: column; box-shadow: var(--shadow);">
+                <h3 style="margin-bottom: 1.5rem; display: flex; justify-content: space-between;">
+                    Orden Actual <span id="pos-item-count" style="font-size: 0.9rem; background: var(--primary); padding: 2px 10px; border-radius: 20px;">0</span>
+                </h3>
+                <div id="pos-cart" style="flex: 1; overflow-y: auto; margin-bottom: 1.5rem; padding-right: 5px;">
+                    <!-- Carrito -->
+                </div>
+                <div style="background: rgba(0,0,0,0.4); padding: 2rem; border-radius: 30px; margin-bottom: 1.5rem; text-align: center; border: 1px solid var(--glass-border);">
+                    <div style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Total a Cobrar</div>
+                    <div id="pos-total-amount" style="font-size: 4rem; font-weight: 900; color: white; text-shadow: 0 0 20px rgba(142, 68, 173, 0.5);">$0.00</div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
+                    <button id="btn-open-payment" class="btn-submit" style="background: var(--success); margin: 0; height: 80px; font-size: 1.5rem; font-weight: 900; border-radius: 20px; box-shadow: 0 10px 20px rgba(46, 204, 113, 0.3);">💰 PAGAR</button>
+                    <button id="btn-shift-toggle" class="btn-submit" style="background: #3498db; margin: 0; height: 60px; font-weight: 800; font-size: 0.9rem; opacity: 0.8;">INICIAR TURNO</button>
+                </div>
+            </div>
+        </div>
+
+        </div>
+    </div>
+
+    <!-- Modal Inicio de Turno -->
+    <div id="shift-modal-container" class="modal-overlay hidden">
+        <div class="modal" style="max-width: 400px; text-align: center;">
+            <span style="font-size: 3rem;">🏦</span>
+            <h3 style="margin: 1rem 0;">Iniciar Turno</h3>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Ingresa el fondo de caja inicial.</p>
+            <div class="form-group" style="text-align: left;">
+                <label>Fondo de Caja ($)</label>
+                <input type="number" id="input-start-cash" placeholder="0.00" style="font-size: 1.5rem; text-align: center; height: 60px;">
+            </div>
+            <button id="btn-confirm-start-shift" class="btn-submit" style="margin-top: 1rem;">ABRIR CAJA</button>
+            <button class="btn-small close-shift-modal" style="margin-top: 1rem; background: none; color: var(--text-muted);">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- Modal de Cobro con Teclado Numérico -->
+    <div id="payment-modal-container" class="modal-overlay hidden">
+        <div class="modal" style="max-width: 450px; padding: 2rem; border-radius: 40px; background: #161a27;">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h2 style="font-size: 1.1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px;">Total a Cobrar</h2>
+                <div id="pay-total-display" style="font-size: 4rem; font-weight: 900; color: white; margin: 0.5rem 0;">$0.00</div>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.4); padding: 1.5rem; border-radius: 25px; margin-bottom: 1.5rem; border: 1px solid var(--glass-border);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; align-items: center;">
+                    <span style="font-weight: 600; color: var(--text-muted);">RECIBIDO:</span>
+                    <div style="display: flex; align-items: center; color: var(--primary-light);">
+                        <span style="font-size: 2rem; font-weight: 800; margin-right: 5px;">$</span>
+                        <input type="text" id="pay-cash-input" value="0" readonly style="background: none; border: none; color: inherit; font-size: 3rem; font-weight: 900; text-align: right; width: 180px; padding: 0;">
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
+                    <span style="font-weight: 600; color: var(--success);">CAMBIO:</span>
+                    <span id="pay-change-display" style="font-size: 2.5rem; font-weight: 900; color: var(--success);">$0.00</span>
+                </div>
+            </div>
+
+            <!-- Teclado Numérico -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 2rem;">
+                <button class="keypad-btn" onclick="pressKey(1)">1</button>
+                <button class="keypad-btn" onclick="pressKey(2)">2</button>
+                <button class="keypad-btn" onclick="pressKey(3)">3</button>
+                <button class="keypad-btn" onclick="pressKey(4)">4</button>
+                <button class="keypad-btn" onclick="pressKey(5)">5</button>
+                <button class="keypad-btn" onclick="pressKey(6)">6</button>
+                <button class="keypad-btn" onclick="pressKey(7)">7</button>
+                <button class="keypad-btn" onclick="pressKey(8)">8</button>
+                <button class="keypad-btn" onclick="pressKey(9)">9</button>
+                <button class="keypad-btn" style="background: rgba(231, 76, 60, 0.2); color: var(--error);" onclick="pressKey('clear')">C</button>
+                <button class="keypad-btn" onclick="pressKey(0)">0</button>
+                <button class="keypad-btn" style="background: rgba(255,255,255,0.1);" onclick="pressKey('delete')">⌫</button>
+            </div>
+
+            <button id="btn-confirm-payment" class="btn-submit" style="height: 80px; font-size: 1.5rem; border-radius: 25px; background: var(--success); font-weight: 800;">FINALIZAR VENTA</button>
+            <button class="btn-small close-payment-modal" style="width: 100%; margin-top: 1.5rem; background: none; color: var(--text-muted); font-weight: 600;">CANCELAR</button>
+        </div>
+    </div>
+
+    <style>
+        .keypad-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            height: 75px;
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+        .keypad-btn:active {
+            background: var(--primary);
+            transform: scale(0.92);
+        }
+    </style>
+
+    <!-- Modal de Resumen de Cierre -->
+    <div id="shift-summary-modal" class="modal-overlay hidden">
+        <div class="modal" style="max-width: 450px; padding: 2.5rem; border-radius: 40px; text-align: center; background: #161a27;">
+            <span style="font-size: 3.5rem;">🏁</span>
+            <h2 style="margin: 1rem 0; font-size: 1.8rem;">Resumen de Cierre</h2>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Verifica los totales antes de realizar el corte.</p>
+            
+            <div style="background: rgba(255,255,255,0.03); border-radius: 25px; padding: 1.5rem; margin-bottom: 2rem; border: 1px solid var(--glass-border);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                    <span style="color: var(--text-muted);">Ventas de hoy:</span>
+                    <span id="summary-sales" style="font-weight: 700; color: white;">$0.00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <span style="color: var(--text-muted);">Fondo inicial:</span>
+                    <span id="summary-start-cash" style="font-weight: 700; color: white;">$0.00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                    <span style="font-weight: 800; color: var(--primary-light);">TOTAL EN CAJA:</span>
+                    <span id="summary-total-expected" style="font-size: 2.2rem; font-weight: 900; color: var(--primary-light);">$0.00</span>
+                </div>
+            </div>
+
+            <button id="btn-confirm-end-shift" class="btn-submit" style="height: 70px; font-size: 1.3rem; border-radius: 20px; background: var(--primary);">PROCEDER AL CORTE</button>
+            <button class="btn-small close-summary-modal" style="width: 100%; margin-top: 1.5rem; background: none; color: var(--text-muted);">Seguir Vendiendo</button>
+        </div>
+    </div>
+
+    <!-- Modal de Notificación Universal (Éxito/Confirmación) -->
+    <div id="notification-modal" class="modal-overlay hidden">
+        <div class="modal" style="max-width: 400px; padding: 3rem; border-radius: 40px; text-align: center; background: #161a27;">
+            <div id="noti-icon" style="font-size: 5rem; margin-bottom: 1.5rem; filter: drop-shadow(0 10px 20px rgba(46, 204, 113, 0.3));">✅</div>
+            <h2 id="noti-title" style="margin-bottom: 1rem; font-size: 1.8rem;">¡Éxito!</h2>
+            <p id="noti-message" style="color: var(--text-muted); margin-bottom: 2.5rem; line-height: 1.6;">Operación completada correctamente.</p>
+            
+            <div id="noti-buttons" style="display: flex; flex-direction: column; gap: 1rem;">
+                <button id="btn-noti-primary" class="btn-submit" style="height: 60px; font-size: 1.1rem; border-radius: 20px;">ACEPTAR</button>
+                <button id="btn-noti-secondary" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-weight: 600;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="datos.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
