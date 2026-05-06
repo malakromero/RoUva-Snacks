@@ -12,9 +12,21 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initApp() {
+    loadData();
     renderDashboard();
     renderDailySummary();
     renderPOSProducts();
+}
+
+function loadData() {
+    const saved = localStorage.getItem('ROUVA_DATA');
+    if (saved) {
+        window.ROUVA_DATA = JSON.parse(saved);
+    }
+}
+
+function saveData() {
+    localStorage.setItem('ROUVA_DATA', JSON.stringify(window.ROUVA_DATA));
 }
 
 // --- NAVEGACIÓN ---
@@ -360,6 +372,7 @@ function processPayment() {
         total: total
     };
     window.ROUVA_DATA.ventas.push(newVenta);
+    saveData();
     
     cart = [];
     updateCartUI();
