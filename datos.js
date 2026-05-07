@@ -1,15 +1,16 @@
 var ROUVA_DATA = {
     inversionInicial: 1000,
     precios: {
-        "n4": 20,
-        "n6": 24,
-        "n8": 28,
-        "n10": 32,
-        "n12": 36,
-        "medio": 40, // ¡PROMOCIÓN!
-        "tostitos": 60,
-        "sopa": 100,
-        "chicharron": 20,
+        "n4": 28,
+        "n6": 33,
+        "n8": 39,
+        "n10": 46,
+        "n12": 53,
+        "medio": 40, // ¡PROMOCIÓN! (Precio normal 60)
+        "tostitos": 60, // ¡PROMOCIÓN! (Precio normal 65)
+        "sopa": 90,
+        "chicharron_especial": 55,
+        "chicharron_sencillo": 35,
         "elote": 30
     },
     ventas: [

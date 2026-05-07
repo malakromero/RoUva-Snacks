@@ -35,7 +35,14 @@ function checkLogin() {
 function loadData() {
     const saved = localStorage.getItem('ROUVA_DATA');
     if (saved) {
-        window.ROUVA_DATA = JSON.parse(saved);
+        const parsedData = JSON.parse(saved);
+        // Fusionar precios: Los de datos.js tienen prioridad para actualizaciones
+        parsedData.precios = { ...parsedData.precios, ...window.ROUVA_DATA.precios };
+        
+        // Eliminar el chicharrón antiguo de $20 que quedó en memoria
+        delete parsedData.precios.chicharron;
+        
+        window.ROUVA_DATA = parsedData;
     }
 }
 
@@ -474,12 +481,17 @@ function renderPOSProducts() {
             position: relative;
         `;
         
-        let label = key.replace('n', 'Vaso #');
-        if(key === 'medio') label = 'Trole 1/2';
-        if(key === 'tostitos') label = 'Tostitos';
-        if(key === 'sopa') label = 'Sopa Maruchan';
-        if(key === 'chicharron') label = 'Chicharrón';
-        if(key === 'elote') label = 'Elote';
+        let label = key;
+        if (key.startsWith('n') && !isNaN(key.substring(1))) {
+            label = key.replace('n', 'Vaso #');
+        } else {
+            if(key === 'medio') label = 'Trole 1/2';
+            if(key === 'tostitos') label = 'Tostitos';
+            if(key === 'sopa') label = 'Sopa Maruchan';
+            if(key === 'chicharron_especial') label = 'Chicharrón Especial';
+            if(key === 'chicharron_sencillo') label = 'Chicharrón Sencillo';
+            if(key === 'elote') label = 'Elote';
+        }
 
         btn.innerHTML = `
             <img src="${getProductIcon(key)}" style="width: 70px; height: 70px; object-fit: contain; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));">
@@ -500,11 +512,12 @@ function renderPOSProducts() {
 }
 
 function getProductIcon(key) {
-    if (key.includes('n') || key === 'medio') return 'assets/trole.png';
     if (key === 'tostitos') return 'assets/tostitos.png';
     if (key === 'sopa') return 'assets/sopa.png';
-    if (key === 'chicharron') return 'assets/chicharron.png';
+    if (key === 'chicharron_especial') return 'assets/chicharron.png';
+    if (key === 'chicharron_sencillo') return 'assets/chicharron_sencillo.png';
     if (key === 'elote') return 'assets/elote.png';
+    if (key.startsWith('n') || key === 'medio') return 'assets/trole.png';
     return 'assets/trole.png';
 }
 
