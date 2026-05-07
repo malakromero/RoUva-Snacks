@@ -130,6 +130,11 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 3rem;
+    padding: 1.5rem 2rem;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(15px);
+    border-radius: 24px;
+    border: 1px solid var(--glass-border);
 }
 
 .welcome-text h2 {
@@ -213,8 +218,25 @@ body {
     font-weight: 500;
 }
 
-.stat-trend.up { color: var(--success); }
-.stat-trend.down { color: var(--error); }
+.stat-card.revenue { 
+    background: linear-gradient(135deg, rgba(142, 68, 173, 0.2), rgba(30, 34, 51, 0.7));
+    border-left: 4px solid var(--primary);
+}
+.stat-card.expenses { 
+    background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(30, 34, 51, 0.7));
+    border-left: 4px solid var(--error);
+}
+.stat-card.profit { 
+    background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(30, 34, 51, 0.7));
+    border-left: 4px solid var(--success);
+}
+.stat-card.roi { 
+    background: linear-gradient(135deg, rgba(230, 126, 34, 0.1), rgba(30, 34, 51, 0.7));
+    border-left: 4px solid var(--secondary);
+}
+
+.stat-trend.up { color: #58d68d; }
+.stat-trend.down { color: #ec7063; }
 
 .stat-icon-bg {
     font-size: 2.5rem;
@@ -260,6 +282,29 @@ body {
 
 .btn-small:hover {
     background: rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+}
+
+.range-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 0.6rem 1.2rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+}
+
+.range-btn.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 5px 15px rgba(142, 68, 173, 0.3);
+}
+
+.range-btn:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.08);
     color: var(--text-main);
 }
 

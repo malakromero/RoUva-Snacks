@@ -59,10 +59,24 @@
         <main class="main-content">
             <header class="top-bar">
                 <div class="welcome-text">
-                    <h2>¡Hola, Angel! 👋</h2>
-                    <p>Aquí tienes el resumen de hoy para RoUva Snacks.</p>
+                <h2>Hola, <span>Malak</span></h2>
+                <p>Aquí tienes el resumen de tu negocio.</p>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+                <div style="display: flex; gap: 8px; background: rgba(255,255,255,0.05); padding: 5px; border-radius: 15px; border: 1px solid var(--glass-border);">
+                    <button class="range-btn active" data-range="all">Todo</button>
+                    <button class="range-btn" data-range="today">Hoy</button>
+                    <button class="range-btn" data-range="week">Semana</button>
+                    <button class="range-btn" data-range="month">Mes</button>
+                    <button class="range-btn" data-range="custom">📅 Personalizado</button>
                 </div>
-                <div class="user-profile">
+                <div id="custom-range-inputs" class="hidden" style="display: flex; gap: 8px; align-items: center; background: rgba(255,255,255,0.03); padding: 8px 15px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                    <input type="date" id="date-from" style="background:none; border:none; color:white; font-family:inherit; outline:none; cursor:pointer;">
+                    <span style="opacity: 0.5;">a</span>
+                    <input type="date" id="date-to" style="background:none; border:none; color:white; font-family:inherit; outline:none; cursor:pointer;">
+                </div>
+            </div>
+            <div class="user-profile">
                     <div class="notifications">🔔</div>
                     <button id="btn-logout" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:1.2rem;" title="Cerrar Sesión">Logout 🚪</button>
                     <div class="avatar" id="user-avatar">A</div>
@@ -95,11 +109,11 @@
                     </div>
                     <div class="stat-icon-bg">✨</div>
                 </div>
-                <div class="stat-card roi">
+                <div class="stat-card roi" id="card-roi-config" style="cursor: pointer;" title="Configurar Inversión Inicial">
                     <div class="stat-info">
                         <h3>Inversión Recuperada</h3>
                         <p class="stat-value" id="roi-progress">0%</p>
-                        <span class="stat-trend" id="roi-status">Pendiente: $0</span>
+                        <span class="stat-trend" id="roi-status">Faltan: $0</span>
                     </div>
                     <div class="stat-icon-bg">🎯</div>
                 </div>
@@ -134,6 +148,9 @@
                         </button>
                         <button class="action-btn expense" id="open-expense-modal">
                             <span class="icon">➖</span> Nuevo Gasto
+                        </button>
+                        <button class="action-btn" id="open-roi-modal" style="background: linear-gradient(135deg, #e67e22, #d35400); box-shadow: 0 10px 20px rgba(230, 126, 34, 0.2); grid-column: 1 / -1;">
+                            <span class="icon">📈</span> Abonar a Inversión
                         </button>
                     </div>
                 </div>
@@ -430,6 +447,75 @@
             <div id="noti-buttons" style="display: flex; flex-direction: column; gap: 1rem;">
                 <button id="btn-noti-primary" class="btn-submit" style="height: 60px; font-size: 1.1rem; border-radius: 20px;">ACEPTAR</button>
                 <button id="btn-noti-secondary" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-weight: 600;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Nuevo Gasto -->
+    <div id="expense-modal-container" class="modal-overlay hidden">
+        <div class="modal" style="max-width: 400px; padding: 2.5rem; border-radius: 30px; background: #161a27;">
+            <div class="modal-header">
+                <h3>Registrar Gasto</h3>
+                <button id="close-expense-modal" style="background:none; border:none; color:var(--text-muted); font-size:2rem; cursor:pointer;">&times;</button>
+            </div>
+            <form id="expense-form">
+                <div class="form-group">
+                    <label>Concepto / Descripción</label>
+                    <input type="text" id="expense-concept" placeholder="Ej. Compra de desechables" required>
+                </div>
+                <div class="form-group">
+                    <label>Monto ($)</label>
+                    <input type="number" id="expense-amount" step="0.01" placeholder="0.00" required>
+                </div>
+                <button type="submit" class="btn-submit" style="background: var(--error);">GUARDAR GASTO</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Abono a Inversión -->
+    <div id="roi-modal-container" class="modal-overlay hidden">
+        <div class="modal" style="max-width: 400px; padding: 2.5rem; border-radius: 30px; background: #161a27;">
+            <div class="modal-header">
+                <h3>Abonar a Inversión</h3>
+                <button id="close-roi-modal" style="background:none; border:none; color:var(--text-muted); font-size:2rem; cursor:pointer;">&times;</button>
+            </div>
+            <form id="roi-form">
+                <div class="form-group">
+                    <label>Monto a Abonar ($)</label>
+                    <input type="number" id="roi-amount" step="0.01" placeholder="0.00" required>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.5rem;">Este monto se sumará a lo ya recuperado.</p>
+                <button type="submit" class="btn-submit" style="background: var(--secondary);">REGISTRAR ABONO</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Configuración Inversión Inicial -->
+    <div id="config-roi-modal-container" class="modal-overlay hidden">
+        <div class="modal" style="max-width: 400px; padding: 2.5rem; border-radius: 30px; background: #161a27;">
+            <div class="modal-header">
+                <h3>Configurar Inversión</h3>
+                <button id="close-config-roi-modal" style="background:none; border:none; color:var(--text-muted); font-size:2rem; cursor:pointer;">&times;</button>
+            </div>
+            <form id="config-roi-form">
+                <div class="form-group">
+                    <label>Inversión Inicial Total ($)</label>
+                    <input type="number" id="config-roi-total" step="0.01" placeholder="0.00" required>
+                </div>
+                <button type="submit" class="btn-submit">GUARDAR CAMBIOS</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Historial Completo -->
+    <div id="history-modal-container" class="modal-overlay hidden">
+        <div class="modal" style="max-width: 600px; padding: 2rem; border-radius: 30px; background: #161a27; max-height: 90vh; display: flex; flex-direction: column;">
+            <div class="modal-header">
+                <h3>Historial de Ventas</h3>
+                <button id="close-history-modal" style="background:none; border:none; color:var(--text-muted); font-size:2rem; cursor:pointer;">&times;</button>
+            </div>
+            <div style="overflow-y: auto; flex: 1; padding-right: 10px;" id="history-list-full">
+                <!-- Se llenará dinámicamente -->
             </div>
         </div>
     </div>

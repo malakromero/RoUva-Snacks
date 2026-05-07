@@ -14,8 +14,9 @@ Este archivo lleva el control de las ventas acumuladas, los pagos a la inversió
 
 | Fecha | Concepto | Ingreso (+) | Egreso (-) | Saldo Caja Chica | Notas |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| 04/04/26 | Venta del día | $248.00 | - | $248.00 | Primeras ventas registradas. |
-| 06/05/26 | Venta del día | $308.00 | - | $556.00 | Ventas del segundo día. |
+| 04/05/26 | Venta del día | $248.00 | - | $248.00 | Primeras ventas registradas. |
+| 05/05/26 | Venta del día | $308.00 | - | $556.00 | Ventas del segundo día. |
+| 06/05/26 | Venta del día | $68.00 | - | $624.00 | Venta del tercer día (Trole #8 y 1/2). |
 | 06/05/26 | Pago a Inversión | - | $214.00 | **$342.00** | Retiro para recuperar inversión inicial. |
 
 ---
