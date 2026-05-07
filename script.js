@@ -103,6 +103,16 @@ function setupEventListeners() {
     document.getElementById('nav-dashboard')?.addEventListener('click', () => showView('dashboard'));
     document.getElementById('nav-pos')?.addEventListener('click', () => showView('pos'));
     document.getElementById('nav-users')?.addEventListener('click', () => showView('users'));
+    document.getElementById('nav-sync')?.addEventListener('click', () => {
+        document.getElementById('sync-modal-container').classList.remove('hidden');
+    });
+    document.getElementById('close-sync-modal')?.addEventListener('click', () => {
+        document.getElementById('sync-modal-container').classList.add('hidden');
+    });
+
+    // Botones de Sincronización
+    document.getElementById('btn-copy-data')?.addEventListener('click', copySyncData);
+    document.getElementById('btn-import-data')?.addEventListener('click', importSyncData);
 
     // Botones de Rango Dashboard
     document.querySelectorAll('.range-btn').forEach(btn => {
@@ -749,4 +759,42 @@ function updateInitialInvestment() {
 
     renderDashboard();
     showNotification('Configuración Guardada', `La inversión inicial se ha actualizado a $${total.toFixed(2)}`, 'success');
+}
+
+function copySyncData() {
+    const dataStr = btoa(JSON.stringify(window.ROUVA_DATA)); // Codificar en Base64 para que no se vea tan feo
+    const textarea = document.getElementById('sync-data-text');
+    textarea.value = dataStr;
+    textarea.select();
+    document.execCommand('copy');
+    showNotification('¡Copiado!', 'El código de tus datos está en el portapapeles. Envíalo a tu otro dispositivo.', 'success');
+}
+
+function importSyncData() {
+    const dataStr = document.getElementById('sync-data-text').value.trim();
+    if (!dataStr) return showNotification('Error', 'Pega el código de sincronización primero.', 'error');
+
+    showNotification(
+        '¿Importar Datos?', 
+        'Esto borrará tus ventas actuales en este dispositivo y las reemplazará con las nuevas. ¿Continuar?', 
+        'warning',
+        () => {
+            try {
+                const decoded = atob(dataStr);
+                const newData = JSON.parse(decoded);
+                
+                // Validación básica
+                if (newData.ventas && newData.precios) {
+                    window.ROUVA_DATA = newData;
+                    saveData();
+                    location.reload(); // Recargar para aplicar todo
+                } else {
+                    throw new Error("Formato inválido");
+                }
+            } catch (e) {
+                showNotification('Error de Formato', 'El código de sincronización no es válido.', 'error');
+            }
+        },
+        true
+    );
 }
