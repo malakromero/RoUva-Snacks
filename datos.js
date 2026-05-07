@@ -33,5 +33,7 @@ var ROUVA_DATA = {
         { id: 1013, fecha: "2026-05-06T19:45:00", items: [{ producto: "Trole 1/2", cantidad: 1, precio: 40 }], total: 40 }
     ],
     pagosInversion: 214,
-    gastos: []
+    gastos: [
+        { id: 2001, fecha: "2026-05-07T01:10:00", concept: "GASTOS COMPRAS", total: 524.00 }
+    ]
 };
